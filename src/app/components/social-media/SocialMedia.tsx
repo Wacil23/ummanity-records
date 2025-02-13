@@ -9,7 +9,7 @@ import SalaryClient from "../salary/SalaryClient";
 const SocialMedia = () => {
   return (
     <SalaryContextProvider>
-      <div className="flex flex-col md:flex-row items-center gap-6 justify-between">
+      <div className="flex flex-col md:flex-row items-stretch md:items-center gap-6  justify-between">
         <div className="md:w-1/2">
           <InsightsClient />
         </div>
