@@ -1,8 +1,8 @@
 "use client";
 
 import React, { createContext, useContext } from "react";
-import { ShopifyInterface } from "../api/shopify/route";
 import useSWR from "swr";
+import { ShopifyInterface } from "../api/shopify/route";
 
 interface ShopifyContextType {
   data: ShopifyInterface | undefined;
@@ -10,15 +10,35 @@ interface ShopifyContextType {
   error: any;
 }
 
+interface ShopifyProviderProps {
+  children: React.ReactNode;
+  startDate?: string;
+  endDate?: string;
+}
+
 const ShopifyContext = createContext<ShopifyContextType | undefined>(undefined);
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
+const fetcher = (url: string) =>
+  fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }).then((res) => res.json());
 
 export const ShopifyContextProvider = ({
   children,
-}: {
-  children: React.ReactNode;
-}) => {
-  const { data, error } = useSWR<ShopifyInterface>("/api/shopify", fetcher, {
+  startDate,
+  endDate,
+}: ShopifyProviderProps) => {
+  // Construction des query params si les dates sont fournies
+  const queryParams = new URLSearchParams();
+  if (startDate) queryParams.append("firstDate", startDate);
+  if (endDate) queryParams.append("lastDate", endDate);
+  const queryString = queryParams.toString();
+  const url = `/api/shopify${queryString ? "?" + queryString : ""}`;
+
+  const { data, error } = useSWR<ShopifyInterface>(url, fetcher, {
     refreshInterval: 30000,
   });
 

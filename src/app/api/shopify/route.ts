@@ -1,5 +1,9 @@
 import { getMYSCustomerOrder } from "@/services/shopify/mysadaka/query/Order.query";
-import { getWAKCustomerOrder } from "@/services/shopify/wakala/query/Order.query";
+import {
+  getCurrentDate,
+  getFirstDayOfMonth,
+  getWAKCustomerOrder,
+} from "@/services/shopify/wakala/query/Order.query";
 
 export interface ShopifyInterface {
   totalSalesWAKFormatted: string;
@@ -7,14 +11,23 @@ export interface ShopifyInterface {
   totalSales: number;
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const totalSalesWAK = await getWAKCustomerOrder();
+    const { searchParams } = new URL(request.url);
+    const firstDate = searchParams.get("firstDate") || getFirstDayOfMonth();
+    const lastDate = searchParams.get("lastDate") || getCurrentDate();
+    const totalSalesWAK = await getWAKCustomerOrder({
+      firstDate,
+      lastDate,
+    });
     const totalSalesWAKFormatted = totalSalesWAK.toLocaleString("fr-FR", {
       style: "currency",
       currency: "EUR",
     });
-    const totalSalesMYS = await getMYSCustomerOrder();
+    const totalSalesMYS = await getMYSCustomerOrder({
+      firstDate,
+      lastDate,
+    });
     const totalSalesMYSFormatted = totalSalesMYS.toLocaleString("fr-FR", {
       style: "currency",
       currency: "EUR",

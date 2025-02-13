@@ -1,7 +1,15 @@
 import { IGOrder, IMonetarySet } from "@/models/shopify/IOrder";
 import { mySadakaAdminClient } from "../Mysadaka";
 
-export async function getMYSCustomerOrder(): Promise<number> {
+interface IMYSCustomerOrder {
+  firstDate: string;
+  lastDate: string;
+}
+
+export async function getMYSCustomerOrder({
+  firstDate,
+  lastDate,
+}: IMYSCustomerOrder): Promise<number> {
   try {
     let hasNextPage = true;
     let endCursor: string | null = null;
@@ -11,7 +19,7 @@ export async function getMYSCustomerOrder(): Promise<number> {
       const orderQuery: string = `
       query {
         orders(first: 250, after: ${endCursor ? `"${endCursor}"` : "null"}, 
-        query: "(created_at:>=${getFirstDayOfMonth()} AND created_at:<=${getCurrentDate()}) AND (financial_status:paid OR financial_status:partially_paid OR financial_status:partially_refunded)") {
+        query: "(created_at:>=${firstDate} AND created_at:<=${lastDate}) AND (financial_status:paid OR financial_status:partially_paid OR financial_status:partially_refunded)") {
           edges {
             node {
               id
@@ -112,18 +120,4 @@ export async function getMYSCustomerOrder(): Promise<number> {
 
 function parseMoney(monetarySet?: IMonetarySet): number {
   return parseFloat(monetarySet?.shopMoney?.amount ?? "0");
-}
-
-function getFirstDayOfMonth(): string {
-  const now = new Date();
-  return `${now.getFullYear()}-${(now.getMonth() + 1)
-    .toString()
-    .padStart(2, "0")}-01`;
-}
-
-function getCurrentDate(): string {
-  const now = new Date();
-  return `${now.getFullYear()}-${(now.getMonth() + 1)
-    .toString()
-    .padStart(2, "0")}-${now.getDate().toString().padStart(2, "0")}`;
 }

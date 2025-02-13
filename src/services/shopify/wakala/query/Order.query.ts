@@ -1,8 +1,16 @@
 import { IGOrder, IMonetarySet } from "@/models/shopify/IOrder";
 import { wakalaAdminClient } from "../Wakala";
 
+interface IWAKCustomerOrder {
+  firstDate: string;
+  lastDate: string;
+}
+
 // Fonction principale pour récupérer le chiffre d'affaires total
-export async function getWAKCustomerOrder(): Promise<number> {
+export async function getWAKCustomerOrder({
+  firstDate,
+  lastDate,
+}: IWAKCustomerOrder): Promise<number> {
   try {
     let hasNextPage = true;
     let endCursor: string | null = null;
@@ -12,7 +20,7 @@ export async function getWAKCustomerOrder(): Promise<number> {
       const orderQuery: string = `
       query {
         orders(first: 250, after: ${endCursor ? `"${endCursor}"` : "null"}, 
-        query: "(created_at:>=${getFirstDayOfMonth()} AND created_at:<=${getCurrentDate()}) AND (financial_status:paid OR financial_status:partially_paid OR financial_status:partially_refunded)") {
+        query: "(created_at:>=${firstDate} AND created_at:<=${lastDate}) AND (financial_status:paid OR financial_status:partially_paid OR financial_status:partially_refunded)") {
           edges {
             node {
               id
@@ -91,24 +99,24 @@ export async function getWAKCustomerOrder(): Promise<number> {
       endCursor = pageInfo.endCursor;
     }
 
-    return totalSales;
+    return parseFloat(totalSales.toFixed(2));
   } catch (error) {
     throw new Error(`Erreur lors de la récupération : ${error}`);
   }
 }
 
 function parseMoney(monetarySet?: IMonetarySet): number {
-  return Number(monetarySet?.shopMoney?.amount ?? "0");
+  return parseFloat(monetarySet?.shopMoney?.amount ?? "0");
 }
 
-function getFirstDayOfMonth(): string {
+export function getFirstDayOfMonth(): string {
   const now = new Date();
   return `${now.getFullYear()}-${(now.getMonth() + 1)
     .toString()
     .padStart(2, "0")}-01`;
 }
 
-function getCurrentDate(): string {
+export function getCurrentDate(): string {
   const now = new Date();
   return `${now.getFullYear()}-${(now.getMonth() + 1)
     .toString()

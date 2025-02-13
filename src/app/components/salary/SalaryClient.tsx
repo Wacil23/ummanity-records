@@ -7,6 +7,7 @@ const SalaryClient = () => {
   const { salary } = useSalary();
   const { data: session } = useSession();
   const { agencySalary, personSalary, previsionalSalary } = salary;
+  console.log("session");
   const personSalaryFormatted = personSalary.toLocaleString("fr-FR", {
     style: "currency",
     currency: "EUR",

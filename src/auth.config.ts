@@ -21,6 +21,17 @@ export const {
     }),
   ],
   callbacks: {
+    async jwt({ token, account, profile }) {
+      if (account && profile) {
+        token.picture = profile.picture;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      console.log("token", token);
+      session.user.image = token.picture;
+      return session;
+    },
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const isOnDashboard = nextUrl.pathname.startsWith("/");
@@ -30,6 +41,7 @@ export const {
       return true;
     },
     async signIn({ account, profile }) {
+      console.log("progile ", profile);
       if (account?.provider === "google") {
         if (
           profile?.email_verified &&
@@ -44,7 +56,6 @@ export const {
       return false;
     },
   },
-
   pages: {
     signIn: "/login",
   },
