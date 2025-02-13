@@ -5,7 +5,7 @@ import SocialMedia from "../components/social-media/SocialMedia";
 import ShopifyContextProvider from "../contexts/ShopifyContext";
 import MetaContextProvider from "../contexts/MetaContext";
 
-export const Home = async () => {
+const HomePage = async () => {
   return (
     <SessionProvider>
       <MetaContextProvider>
@@ -29,4 +29,4 @@ export const Home = async () => {
   );
 };
 
-export default Home;
+export default HomePage;
