@@ -25,7 +25,6 @@ export async function getMYSCustomerOrder({
               id
               name
               createdAt
-              taxesIncluded
               currencyCode
               totalPrice 
               totalPriceSet{
@@ -33,47 +32,11 @@ export async function getMYSCustomerOrder({
                   amount
                 }
               }
-              currentTotalTaxSet {
-                shopMoney {
-                  amount
-                }
-              }
-              subtotalPriceSet {
-                shopMoney {
-                  amount
-                }
-              }
-              totalTaxSet {
-                shopMoney {
-                  amount
-                }
-              }
-                refunds(first: 150){
+              refunds(first: 250){
                 totalRefundedSet{
                   shopMoney{
                     amount
                   }
-                }
-              }
-          
-              totalShippingPriceSet {
-                shopMoney {
-                  amount
-                }
-              }
-              currentTotalDutiesSet {
-                shopMoney {
-                  amount
-                }
-              }
-              currentTotalAdditionalFeesSet {
-                shopMoney {
-                  amount
-                }
-              }
-              currentTotalDiscountsSet {
-                shopMoney {
-                  amount
                 }
               }
             }

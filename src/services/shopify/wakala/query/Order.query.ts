@@ -32,36 +32,11 @@ export async function getWAKCustomerOrder({
                   amount
                 }
               }
-              currentTotalTaxSet {
-                shopMoney {
-                  amount
-                }
-              }
-              totalShippingPriceSet {
-                shopMoney {
-                  amount
-                }
-              }
-              currentTotalDutiesSet {
-                shopMoney {
-                  amount
-                }
-              }
-                refunds(first: 100){
+                refunds(first: 250){
                 totalRefundedSet{
                   shopMoney{
                     amount
                   }
-                }
-              }
-              currentTotalAdditionalFeesSet {
-                shopMoney {
-                  amount
-                }
-              }
-              totalRefundedSet {
-                shopMoney {
-                  amount
                 }
               }
             }
